@@ -15,3 +15,7 @@ if __name__ == "__main__":
 
         print(f"\n{user_choice.capitalize()}d Text:")
         print(result)
+import nltk
+
+
+

@@ -4,41 +4,37 @@ from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.corpus import wordnet
 from text_processor import TextProcessor
 
+# ✅ INHERITANCE: Paraphraser also inherits from TextProcessor
 class Paraphraser(TextProcessor):
+
     def __init__(self, text):
         super().__init__(text)
 
     def _get_synonym(self, word):
         """
-        Find a synonym for the word using WordNet. Return the original word if no synonym found.
+        ✅ ENCAPSULATION: Internal method to get a synonym for a word.
+        Users never see or call this method directly.
         """
         synonyms = wordnet.synsets(word)
         if synonyms:
-            # Get all possible lemmas for the first synonym
-            lemmas = synonyms[0].lemmas()
-            # Choose one synonym that is different from the original word
-            for lemma in lemmas:
+            for lemma in synonyms[0].lemmas():
                 synonym = lemma.name().replace('_', ' ')
                 if synonym.lower() != word.lower():
                     return synonym
         return word
 
     def _paraphrase_sentence(self, sentence):
-        """
-        Replace some words with their synonyms.
-        """
         tokens = word_tokenize(sentence)
         paraphrased = []
-
         for word in tokens:
-            # Only try replacing if it's a normal word (not punctuation or number)
             if word.isalpha() and len(word) > 3:
-                if random.random() < 0.4:  # 40% chance to replace
+                if random.random() < 0.4:
                     word = self._get_synonym(word)
             paraphrased.append(word)
-
         return ' '.join(paraphrased)
 
+    # ✅ POLYMORPHISM: Like in Summarizer, this `process()` method behaves differently.
+    # This one paraphrases instead of summarizing.
     def process(self):
         sentences = sent_tokenize(self._text)
         return ' '.join([self._paraphrase_sentence(s) for s in sentences])
